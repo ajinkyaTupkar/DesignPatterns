@@ -8,13 +8,21 @@ public class Singleton {
     private Singleton() {}
 
     // Public method to provide access to the instance
+    // SYNCHRONIZED - to ensure thread safety
+    // public static synchronized Singleton getInstance() {  (This is suboptimal as it locks the method every time it's called, even after the instance is created)
     public static Singleton getInstance() {
         if (instance == null) {
-            // Lazy initialization
-            instance = new Singleton();
+            synchronized (Singleton.class) {  // Synchronized is used here to block only if instance is null this is a minor optimization. Synchronized can be used in method as well. But that will increase latency.
+                if (instance == null) { // Double-checked locking
+                    // Check again to ensure that only one instance is created
+                    // Lazy initialization
+                    instance = new Singleton();
+                }
+            }
         }
         return instance;
     }
+       
 
     // Example method
     public void showMessage() {
